@@ -2380,7 +2380,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
 
       // ════════════════ PROJECT LINK (right side, highly visible) ════════════════
       const linkText = "mehara-vesak.netlify.app";
-      const linkFontSize = Math.max(12, Math.min(w, h) * 0.018);
+      const linkFontSize = Math.max(14, Math.min(w, h) * 0.022);
       ctx.font = `bold ${linkFontSize}px sans-serif`;
       const linkMetrics = ctx.measureText(linkText);
       const linkPadX = linkFontSize * 0.7;
@@ -2388,7 +2388,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       const linkW = linkMetrics.width + linkPadX * 2;
       const linkH = linkFontSize + linkPadY * 2;
       const linkX = w - linkW - Math.min(w, h) * 0.03;
-      const linkY = h * 0.08;
+      const linkY = h * 0.88;
       const linkR = linkH / 2;
 
       // soft glow behind badge
@@ -2401,7 +2401,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       ctx.fill();
 
       // bright white pill background
-      ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.98)";
       ctx.beginPath();
       ctx.roundRect(linkX, linkY, linkW, linkH, linkR);
       ctx.fill();
@@ -2412,7 +2412,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       ctx.stroke();
 
       // dark bold text
-      ctx.fillStyle = "#111111";
+      ctx.fillStyle = "#0a0a0a";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(linkText, linkX + linkW / 2, linkY + linkH / 2);
