@@ -2519,6 +2519,8 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
 }
 
 export default function LotusFlower() {
+  const [showTech, setShowTech] = useState(false);
+
   return (
     <LotusBackground>
     <div style={{
@@ -3525,6 +3527,100 @@ export default function LotusFlower() {
         </svg>
       </div>
     </div>
+      {/* Technical Info Button */}
+      <button
+        onClick={() => setShowTech(!showTech)}
+        style={{
+          position: "absolute",
+          bottom: 10,
+          left: 10,
+          zIndex: 20,
+          background: "rgba(255,255,255,0.15)",
+          color: "#fff",
+          border: "1px solid rgba(255,255,255,0.25)",
+          borderRadius: 6,
+          padding: "5px 10px",
+          fontSize: 11,
+          fontWeight: 600,
+          cursor: "pointer",
+          backdropFilter: "blur(4px)",
+          WebkitBackdropFilter: "blur(4px)",
+        }}
+      >
+        {showTech ? "Close" : "ℹ️ Tech"}
+      </button>
+
+      {/* Technical Info Panel */}
+      {showTech && (
+        <div
+          onClick={() => setShowTech(false)}
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 19,
+            background: "rgba(0,0,0,0.7)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 20,
+            backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "rgba(10, 15, 28, 0.95)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 14,
+              padding: "22px 26px",
+              maxWidth: 420,
+              maxHeight: "80vh",
+              overflowY: "auto",
+              color: "#e2e8f0",
+              fontSize: 13,
+              lineHeight: 1.6,
+              boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+            }}
+          >
+            <h2 style={{ margin: "0 0 12px", fontSize: 16, color: "#fbbf24", fontWeight: 700 }}>
+              How It Was Built
+            </h2>
+            <p style={{ margin: "0 0 14px", opacity: 0.85 }}>
+              A two-layer digital art piece: procedural canvas animation + hand-coded SVG illustration.
+            </p>
+
+            <h3 style={{ margin: "14px 0 6px", fontSize: 13, color: "#60a5fa", fontWeight: 600 }}>🎨 Canvas Layer</h3>
+            <ul style={{ margin: 0, paddingLeft: 18, opacity: 0.85 }}>
+              <li>120 stars with individual twinkle phases</li>
+              <li>Procedural moon with craters & god rays</li>
+              <li>Sine-wave mountain terrain (multi-octave)</li>
+              <li>8 village houses with animated smoke & windows</li>
+              <li>Reflective water with moon shimmer & ripples</li>
+              <li>4 Vesak lantern styles: Atapattam, Tharuka, Nelum, Cyber</li>
+              <li>Dagoba with bell-curve dome & pulsing chuda</li>
+            </ul>
+
+            <h3 style={{ margin: "14px 0 6px", fontSize: 13, color: "#f472b6", fontWeight: 600 }}>🪷 SVG Layer</h3>
+            <ul style={{ margin: 0, paddingLeft: 18, opacity: 0.85 }}>
+              <li>5 layers of petals (9+8+7+6+5) with gradients</li>
+              <li>24 stamens with pollen particles</li>
+              <li>Seed pod with 18 seeds in concentric rings</li>
+              <li>6 creatures: dragonfly, ladybug, bee, frog, snail, butterfly</li>
+              <li>Dew drops with rainbow caustics</li>
+            </ul>
+
+            <h3 style={{ margin: "14px 0 6px", fontSize: 13, color: "#34d399", fontWeight: 600 }}>⚙️ Tech Stack</h3>
+            <p style={{ margin: 0, opacity: 0.85 }}>
+              Next.js 16 · React 19 · TypeScript · HTML5 Canvas 2D · SVG · Tailwind CSS v4
+            </p>
+
+            <p style={{ margin: "14px 0 0", fontSize: 11, opacity: 0.5, textAlign: "center" }}>
+              IEEE Vesak Verse 26 — Where Tradition Meets the Glow of Innovation
+            </p>
+          </div>
+        </div>
+      )}
     </LotusBackground>
   );
 }
