@@ -2378,29 +2378,44 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       ctx.fillStyle = vigR;
       ctx.fillRect(0, 0, w, h);
 
-      // ════════════════ PROJECT LINK ════════════════
+      // ════════════════ PROJECT LINK (right side, highly visible) ════════════════
       const linkText = "mehara-vesak.netlify.app";
-      ctx.font = `${Math.max(10, Math.min(w, h) * 0.013)}px sans-serif`;
+      const linkFontSize = Math.max(12, Math.min(w, h) * 0.018);
+      ctx.font = `bold ${linkFontSize}px sans-serif`;
       const linkMetrics = ctx.measureText(linkText);
-      const linkPad = Math.min(w, h) * 0.012;
-      const linkX = w * 0.5 - linkMetrics.width / 2 - linkPad;
-      const linkY = h - Math.min(w, h) * 0.035 - linkPad;
-      const linkW = linkMetrics.width + linkPad * 2;
-      const linkH = Math.min(w, h) * 0.022 + linkPad;
-      // white pill background
-      ctx.fillStyle = "rgba(255, 255, 255, 0.82)";
+      const linkPadX = linkFontSize * 0.7;
+      const linkPadY = linkFontSize * 0.5;
+      const linkW = linkMetrics.width + linkPadX * 2;
+      const linkH = linkFontSize + linkPadY * 2;
+      const linkX = w - linkW - Math.min(w, h) * 0.03;
+      const linkY = h * 0.08;
+      const linkR = linkH / 2;
+
+      // soft glow behind badge
+      const badgeGlow = ctx.createRadialGradient(linkX + linkW / 2, linkY + linkH / 2, 0, linkX + linkW / 2, linkY + linkH / 2, linkW * 0.7);
+      badgeGlow.addColorStop(0, "rgba(255, 255, 255, 0.35)");
+      badgeGlow.addColorStop(1, "rgba(255, 255, 255, 0)");
+      ctx.fillStyle = badgeGlow;
       ctx.beginPath();
-      ctx.roundRect(linkX, linkY, linkW, linkH, linkH / 2);
+      ctx.arc(linkX + linkW / 2, linkY + linkH / 2, linkW * 0.7, 0, Math.PI * 2);
       ctx.fill();
-      // subtle border
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.12)";
-      ctx.lineWidth = 0.5;
+
+      // bright white pill background
+      ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
+      ctx.beginPath();
+      ctx.roundRect(linkX, linkY, linkW, linkH, linkR);
+      ctx.fill();
+
+      // stronger border
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.lineWidth = 1;
       ctx.stroke();
-      // dark text
-      ctx.fillStyle = "#1a1a1a";
+
+      // dark bold text
+      ctx.fillStyle = "#111111";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(linkText, w * 0.5, linkY + linkH / 2);
+      ctx.fillText(linkText, linkX + linkW / 2, linkY + linkH / 2);
 
       animRef.current = requestAnimationFrame(draw);
     };
