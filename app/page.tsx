@@ -2378,6 +2378,30 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       ctx.fillStyle = vigR;
       ctx.fillRect(0, 0, w, h);
 
+      // ════════════════ PROJECT LINK ════════════════
+      const linkText = "mehara-vesak.netlify.app";
+      ctx.font = `${Math.max(10, Math.min(w, h) * 0.013)}px sans-serif`;
+      const linkMetrics = ctx.measureText(linkText);
+      const linkPad = Math.min(w, h) * 0.012;
+      const linkX = w * 0.5 - linkMetrics.width / 2 - linkPad;
+      const linkY = h - Math.min(w, h) * 0.035 - linkPad;
+      const linkW = linkMetrics.width + linkPad * 2;
+      const linkH = Math.min(w, h) * 0.022 + linkPad;
+      // white pill background
+      ctx.fillStyle = "rgba(255, 255, 255, 0.82)";
+      ctx.beginPath();
+      ctx.roundRect(linkX, linkY, linkW, linkH, linkH / 2);
+      ctx.fill();
+      // subtle border
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.12)";
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+      // dark text
+      ctx.fillStyle = "#1a1a1a";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(linkText, w * 0.5, linkY + linkH / 2);
+
       animRef.current = requestAnimationFrame(draw);
     };
 
