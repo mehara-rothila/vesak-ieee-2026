@@ -2428,6 +2428,60 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  const handleDownload = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const container = canvas.parentElement;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = rect.width * dpr;
+    tempCanvas.height = rect.height * dpr;
+    const tctx = tempCanvas.getContext("2d");
+    if (!tctx) return;
+
+    // Draw canvas background layer (full scene, scaled to container)
+    tctx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
+
+    // Find and composite SVG lotus layer on top
+    const svgElement = container.querySelector("svg");
+    if (svgElement) {
+      const svgRect = svgElement.getBoundingClientRect();
+      const svgX = (svgRect.left - rect.left) * dpr;
+      const svgY = (svgRect.top - rect.top) * dpr;
+      const svgW = svgRect.width * dpr;
+      const svgH = svgRect.height * dpr;
+
+      const clone = svgElement.cloneNode(true);
+      if (!clone.getAttribute("xmlns")) {
+        clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      }
+
+      const svgData = new XMLSerializer().serializeToString(clone);
+      const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject();
+        img.src = url;
+      });
+
+      tctx.drawImage(img, svgX, svgY, svgW, svgH);
+      URL.revokeObjectURL(url);
+    }
+
+    const link = document.createElement("a");
+    link.download = "vesak-verse-26.png";
+    link.href = tempCanvas.toDataURL("image/png");
+    link.click();
+  };
+
   return (
     <div style={{
       position: "fixed",
@@ -2458,62 +2512,13 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
         <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
           {children}
         </div>
+
       </div>
     </div>
   );
 }
 
 export default function LotusFlower() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      const userAgent = navigator.userAgent || navigator.vendor;
-      const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i;
-      const isSmallScreen = window.innerWidth <= 768;
-      setIsMobile(mobileRegex.test(userAgent) || isSmallScreen);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  if (isMobile) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)',
-        padding: '20px',
-      }}>
-        <div style={{
-          textAlign: 'center',
-          color: '#fff',
-          maxWidth: '400px',
-        }}>
-          <div style={{ fontSize: '48px', marginBottom: '20px' }}>🖥️</div>
-          <h1 style={{
-            fontFamily: "'Georgia', serif",
-            fontSize: '22px',
-            color: '#f48fb1',
-            marginBottom: '12px',
-          }}>Desktop Only</h1>
-          <p style={{
-            fontFamily: "'Georgia', serif",
-            fontSize: '15px',
-            color: '#b0bec5',
-            lineHeight: '1.6',
-          }}>
-            This experience is designed for desktop browsers only. Please open this link on a laptop or desktop computer.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <LotusBackground>
     <div style={{
@@ -2526,7 +2531,7 @@ export default function LotusFlower() {
       overflow: 'hidden'
     }}>
       <div style={{ position: 'relative' }}>
-        <svg width="430" height="500" viewBox="0 0 700 800" style={{ filter: 'drop-shadow(0 25px 70px rgba(180, 80, 130, 0.3)) drop-shadow(0 8px 20px rgba(200, 100, 150, 0.15))' }}>
+        <svg width="100%" height="100%" viewBox="0 0 700 800" preserveAspectRatio="xMidYMid meet" style={{ filter: 'drop-shadow(0 25px 70px rgba(180, 80, 130, 0.3)) drop-shadow(0 8px 20px rgba(200, 100, 150, 0.15))' }}>
           <defs>
             {/* ====== PETAL GRADIENTS — richer color stops ====== */}
 
