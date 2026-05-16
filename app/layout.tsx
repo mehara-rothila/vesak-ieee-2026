@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vesak Competition",
-  description: "A beautiful Vesak celebration page",
+  title: "Vesak Verse 26 — IEEE",
+  description: "Where Tradition Meets the Glow of Innovation — An AI-powered digital art celebration of Vesak",
 };
 
 export default function RootLayout({
