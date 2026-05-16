@@ -2532,8 +2532,8 @@ export default function LotusFlower() {
       background: 'transparent',
       overflow: 'hidden'
     }}>
-      <div style={{ position: 'relative' }}>
-        <svg width="100%" height="100%" viewBox="0 0 700 800" preserveAspectRatio="xMidYMid meet" style={{ filter: 'drop-shadow(0 25px 70px rgba(180, 80, 130, 0.3)) drop-shadow(0 8px 20px rgba(200, 100, 150, 0.15))' }}>
+      <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <svg width="90%" height="90%" viewBox="0 0 700 800" preserveAspectRatio="xMidYMid meet" style={{ filter: 'drop-shadow(0 25px 70px rgba(180, 80, 130, 0.3)) drop-shadow(0 8px 20px rgba(200, 100, 150, 0.15))' }}>
           <defs>
             {/* ====== PETAL GRADIENTS — richer color stops ====== */}
 
