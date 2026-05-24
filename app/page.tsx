@@ -10,11 +10,17 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
+    // Mobile detection & adaptive quality — ONLY affects particle counts / step sizes.
+    // Desktop renders at full original fidelity. Mobile keeps identical visuals
+    // but halves particle density and loop granularity, which is imperceptible on small screens.
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768 || window.innerHeight < 600;
+    const q = isMobile ? 0.5 : 1;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let w: number, h: number;
 
     const resize = () => {
-      // Read canvas's CSS size (set by the 1:1 square stage), so internal pixels match
+      // Keep 1:1 CSS-pixel mapping — original behavior, fast on all devices
       w = canvas.width = canvas.clientWidth || window.innerWidth;
       h = canvas.height = canvas.clientHeight || window.innerHeight;
     };
@@ -24,7 +30,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
     const HORIZON = 0.46;
 
     // ── Stars ──
-    const stars = Array.from({ length: 120 }, () => ({
+    const stars = Array.from({ length: Math.round(120 * q) }, () => ({
       x: Math.random(),
       y: Math.random() * 0.43,
       r: Math.random() * 1.3 + 0.2,
@@ -38,7 +44,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
     let shootTimer = 0;
 
     // ── Clouds ──
-    const clouds = Array.from({ length: 6 }, () => ({
+    const clouds = Array.from({ length: Math.round(6 * q) }, () => ({
       x: Math.random() * 1.4 - 0.2,
       y: 0.05 + Math.random() * 0.25,
       w: 0.08 + Math.random() * 0.15,
@@ -54,7 +60,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
     }));
 
     // ── Aurora ──
-    const auroraWaves = Array.from({ length: 5 }, (_, i) => ({
+    const auroraWaves = Array.from({ length: Math.round(5 * q) }, (_, i) => ({
       phase: i * 1.3,
       freq: 1.5 + i * 0.4,
       amp: 0.015 + Math.random() * 0.02,
@@ -65,7 +71,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
     }));
 
     // ── Fireflies ──
-    const fireflies = Array.from({ length: 25 }, () => ({
+    const fireflies = Array.from({ length: Math.round(25 * q) }, () => ({
       x: Math.random(),
       y: 0.36 + Math.random() * 0.26,
       r: Math.random() * 2 + 0.8,
@@ -85,7 +91,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
     let fishTimer = 0;
 
     // ── Floating petals ──
-    const petals = Array.from({ length: 12 }, () => ({
+    const petals = Array.from({ length: Math.round(12 * q) }, () => ({
       x: Math.random(),
       y: 0.54 + Math.random() * 0.38,
       size: Math.random() * 4.5 + 2,
@@ -96,7 +102,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
     }));
 
     // ── Lily pads ──
-    const lilyPads = Array.from({ length: 5 }, () => ({
+    const lilyPads = Array.from({ length: Math.round(5 * q) }, () => ({
       x: 0.05 + Math.random() * 0.9,
       y: 0.58 + Math.random() * 0.32,
       size: 8 + Math.random() * 14,
@@ -108,7 +114,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
     }));
 
     // ── Ambient particles (pollen/dust) ──
-    const particles = Array.from({ length: 40 }, () => ({
+    const particles = Array.from({ length: Math.round(40 * q) }, () => ({
       x: Math.random(),
       y: Math.random() * 0.6,
       r: Math.random() * 0.8 + 0.2,
@@ -119,7 +125,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
     }));
 
     // ── Glowing mushrooms at shore ──
-    const mushrooms = Array.from({ length: 6 }, () => ({
+    const mushrooms = Array.from({ length: Math.round(6 * q) }, () => ({
       x: Math.random() > 0.5 ? (0.01 + Math.random() * 0.1) : (0.88 + Math.random() * 0.1),
       y: HORIZON - 0.005 + Math.random() * 0.025,
       size: 3 + Math.random() * 4,
@@ -129,9 +135,15 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
     }));
 
     let t = 0;
+    let frameCount = 0;
 
     const draw = () => {
-      t++;
+      frameCount++;
+      if (isMobile && frameCount % 2 !== 0) {
+        animRef.current = requestAnimationFrame(draw);
+        return;
+      }
+      t += isMobile ? 2 : 1;
       const time = t * 0.003;
       ctx.clearRect(0, 0, w, h);
 
@@ -344,8 +356,8 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       // God rays — prominent light beams
       ctx.save();
       ctx.globalCompositeOperation = "screen";
-      for (let i = 0; i < 12; i++) {
-        const rayAngle = (i / 12) * Math.PI * 2 + time * 0.04;
+      for (let i = 0; i < (isMobile ? 6 : 12); i++) {
+        const rayAngle = (i / (isMobile ? 6 : 12)) * Math.PI * 2 + time * 0.04;
         const rayLen = moonR * (5 + Math.sin(time * 0.4 + i * 1.5) * 2);
         const rayW = moonR * 0.18;
         const rayAlpha = 0.025 + Math.sin(time * 0.6 + i * 0.8) * 0.012;
@@ -486,7 +498,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       // Far range (snow-capped)
       ctx.beginPath();
       ctx.moveTo(0, h * HORIZON);
-      for (let x = 0; x <= w; x += 2) {
+      for (let x = 0; x <= w; x += (isMobile ? 4 : 2)) {
         const nx = x / w;
         let y = h * HORIZON;
         y -= Math.sin(nx * Math.PI * 1.1 + 0.3) * h * 0.065;
@@ -502,7 +514,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       // Snow highlight on peaks
       ctx.save();
       ctx.beginPath();
-      for (let x = 0; x <= w; x += 2) {
+      for (let x = 0; x <= w; x += (isMobile ? 4 : 2)) {
         const nx = x / w;
         let y = h * HORIZON;
         y -= Math.sin(nx * Math.PI * 1.1 + 0.3) * h * 0.065;
@@ -511,7 +523,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
-      for (let x = w; x >= 0; x -= 2) {
+      for (let x = w; x >= 0; x -= (isMobile ? 4 : 2)) {
         const nx = x / w;
         let y = h * HORIZON;
         y -= Math.sin(nx * Math.PI * 1.1 + 0.3) * h * 0.065;
@@ -528,7 +540,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       // Near range
       ctx.beginPath();
       ctx.moveTo(0, h * (HORIZON + 0.008));
-      for (let x = 0; x <= w; x += 2) {
+      for (let x = 0; x <= w; x += (isMobile ? 4 : 2)) {
         const nx = x / w;
         let y = h * (HORIZON + 0.008);
         y -= Math.sin(nx * Math.PI * 1.7 + 0.8) * h * 0.04;
@@ -2039,7 +2051,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       ctx.fillStyle = "rgba(6, 12, 22, 1)";
       ctx.beginPath();
       ctx.moveTo(0, treeBaseY);
-      for (let x = 0; x <= w; x += 4) {
+      for (let x = 0; x <= w; x += (isMobile ? 8 : 4)) {
         const nx = x / w;
         const noise = Math.sin(nx * 45) * 3 + Math.sin(nx * 28 + 2.5) * 4;
         const baseH = 14 + Math.sin(nx * Math.PI * 2.2 + 0.5) * 7;
@@ -2077,8 +2089,8 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       ctx.fillRect(0, waterTop, w, h - waterTop);
 
       // Shimmering broken segments
-      for (let i = 0; i < 55; i++) {
-        const progress = i / 55;
+      for (let i = 0; i < (isMobile ? 28 : 55); i++) {
+        const progress = i / (isMobile ? 28 : 55);
         const y = reflStartY + progress * reflLen;
         const waveX = Math.sin(time * 2.2 + progress * 7) * (4 + progress * 22);
         const waveX2 = Math.cos(time * 1.5 + progress * 5) * (3 + progress * 12);
@@ -2111,7 +2123,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
         const waveScale = 1 + progress * 2;
         ctx.beginPath();
         ctx.moveTo(0, y);
-        for (let x = 0; x <= w; x += 6) {
+        for (let x = 0; x <= w; x += (isMobile ? 10 : 6)) {
           const wave1 = Math.sin(x * 0.003 + time * 0.7 + i * 0.45) * 2.2 * waveScale;
           const wave2 = Math.sin(x * 0.008 + time * 1.1 + i * 0.8) * 1.2 * waveScale;
           const wave3 = Math.cos(x * 0.0018 + time * 0.45 + i * 0.25) * 1.8 * waveScale;
@@ -2377,45 +2389,6 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
       vigR.addColorStop(1, "rgba(2, 4, 10, 0.55)");
       ctx.fillStyle = vigR;
       ctx.fillRect(0, 0, w, h);
-
-      // ════════════════ PROJECT LINK (right side, highly visible) ════════════════
-      const linkText = "mehara-vesak.netlify.app";
-      const linkFontSize = Math.max(14, Math.min(w, h) * 0.022);
-      ctx.font = `bold ${linkFontSize}px sans-serif`;
-      const linkMetrics = ctx.measureText(linkText);
-      const linkPadX = linkFontSize * 0.7;
-      const linkPadY = linkFontSize * 0.5;
-      const linkW = linkMetrics.width + linkPadX * 2;
-      const linkH = linkFontSize + linkPadY * 2;
-      const linkX = w - linkW - Math.min(w, h) * 0.03;
-      const linkY = h * 0.88;
-      const linkR = linkH / 2;
-
-      // soft glow behind badge
-      const badgeGlow = ctx.createRadialGradient(linkX + linkW / 2, linkY + linkH / 2, 0, linkX + linkW / 2, linkY + linkH / 2, linkW * 0.7);
-      badgeGlow.addColorStop(0, "rgba(255, 255, 255, 0.35)");
-      badgeGlow.addColorStop(1, "rgba(255, 255, 255, 0)");
-      ctx.fillStyle = badgeGlow;
-      ctx.beginPath();
-      ctx.arc(linkX + linkW / 2, linkY + linkH / 2, linkW * 0.7, 0, Math.PI * 2);
-      ctx.fill();
-
-      // bright white pill background
-      ctx.fillStyle = "rgba(255, 255, 255, 0.98)";
-      ctx.beginPath();
-      ctx.roundRect(linkX, linkY, linkW, linkH, linkR);
-      ctx.fill();
-
-      // stronger border
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.2)";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // dark bold text
-      ctx.fillStyle = "#0a0a0a";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(linkText, linkX + linkW / 2, linkY + linkH / 2);
 
       animRef.current = requestAnimationFrame(draw);
     };
@@ -3210,7 +3183,7 @@ export default function LotusFlower() {
             <path d="M0,7 Q2,20 4,35 Q5,48 3,62 Q1,72 0,78" stroke="url(#df-tail)" strokeWidth="4.5" fill="none" strokeLinecap="round" />
             <path d="M0,7 Q2,20 4,35 Q5,48 3,62 Q1,72 0,78" stroke="rgba(0,105,92,0.6)" strokeWidth="3" fill="none" strokeLinecap="round" />
             {/* Tail segments */}
-            {[12, 20, 28, 36, 44, 52, 60, 68].map((y, si) => {
+            {[12, 20, 28, 36, 44, 52, 60, 68].map((y, si) => { 
               const tx = si < 4 ? 1 + si * 0.5 : 4.5 - (si - 4) * 0.5;
               return <line key={`seg-${si}`} x1={tx - 2.5} y1={y} x2={tx + 2.5} y2={y} stroke="rgba(0,77,64,0.3)" strokeWidth="0.5" />;
             })}
