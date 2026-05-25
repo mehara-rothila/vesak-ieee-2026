@@ -28,12 +28,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Performance: isolate the canvas rendering layer */
-canvas {
-  contain: strict;
-  content-visibility: auto;
-}
-
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   *,

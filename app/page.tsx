@@ -10,7 +10,7 @@ function LotusBackground({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
+    const ctx = canvas.getContext("2d", { alpha: false });
     // Mobile detection & adaptive quality — ONLY affects particle counts / step sizes.
     // Desktop renders at full original fidelity. Mobile keeps identical visuals
     // but halves particle density and loop granularity, which is imperceptible on small screens.
