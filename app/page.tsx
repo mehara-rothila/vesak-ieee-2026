@@ -3586,19 +3586,20 @@ export default function LotusFlower() {
         onClick={() => setShowTech(!showTech)}
         style={{
           position: "absolute",
-          bottom: 10,
-          left: 10,
+          bottom: "max(12px, 2vh)",
+          left: "max(12px, 2vh)",
           zIndex: 20,
           background: "rgba(255,255,255,0.15)",
           color: "#fff",
           border: "1px solid rgba(255,255,255,0.25)",
-          borderRadius: 6,
-          padding: "5px 10px",
-          fontSize: 11,
+          borderRadius: 8,
+          padding: "8px 14px",
+          fontSize: "clamp(12px, 3.5vw, 14px)",
           fontWeight: 600,
           cursor: "pointer",
           backdropFilter: "blur(4px)",
           WebkitBackdropFilter: "blur(4px)",
+          minHeight: 36,
         }}
       >
         {showTech ? "Close" : "ℹ️ Tech"}
@@ -3616,7 +3617,7 @@ export default function LotusFlower() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: 20,
+            padding: "max(12px, 3vw)",
             backdropFilter: "blur(6px)",
             WebkitBackdropFilter: "blur(6px)",
           }}
@@ -3627,25 +3628,26 @@ export default function LotusFlower() {
               background: "rgba(10, 15, 28, 0.95)",
               border: "1px solid rgba(255,255,255,0.12)",
               borderRadius: 14,
-              padding: "22px 26px",
-              maxWidth: 420,
+              padding: "max(16px, 5vw)",
+              maxWidth: "min(92vw, 480px)",
+              width: "100%",
               maxHeight: "80vh",
               overflowY: "auto",
               color: "#e2e8f0",
-              fontSize: 13,
+              fontSize: "clamp(13px, 3.5vw, 15px)",
               lineHeight: 1.6,
               boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
             }}
           >
-            <h2 style={{ margin: "0 0 12px", fontSize: 16, color: "#fbbf24", fontWeight: 700 }}>
+            <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16px, 5vw, 20px)", color: "#fbbf24", fontWeight: 700 }}>
               How It Was Built
             </h2>
             <p style={{ margin: "0 0 14px", opacity: 0.85 }}>
               A two-layer digital art piece: procedural canvas animation + hand-coded SVG illustration.
             </p>
 
-            <h3 style={{ margin: "14px 0 6px", fontSize: 13, color: "#60a5fa", fontWeight: 600 }}>🎨 Canvas Layer</h3>
-            <ul style={{ margin: 0, paddingLeft: 18, opacity: 0.85 }}>
+            <h3 style={{ margin: "14px 0 6px", fontSize: "clamp(13px, 4vw, 15px)", color: "#60a5fa", fontWeight: 600 }}>🎨 Canvas Layer</h3>
+            <ul style={{ margin: 0, paddingLeft: "max(16px, 5vw)", opacity: 0.85 }}>
               <li>120 stars with individual twinkle phases</li>
               <li>Procedural moon with craters & god rays</li>
               <li>Sine-wave mountain terrain (multi-octave)</li>
@@ -3655,8 +3657,8 @@ export default function LotusFlower() {
               <li>Dagoba with bell-curve dome & pulsing chuda</li>
             </ul>
 
-            <h3 style={{ margin: "14px 0 6px", fontSize: 13, color: "#f472b6", fontWeight: 600 }}>🪷 SVG Layer</h3>
-            <ul style={{ margin: 0, paddingLeft: 18, opacity: 0.85 }}>
+            <h3 style={{ margin: "14px 0 6px", fontSize: "clamp(13px, 4vw, 15px)", color: "#f472b6", fontWeight: 600 }}>🪷 SVG Layer</h3>
+            <ul style={{ margin: 0, paddingLeft: "max(16px, 5vw)", opacity: 0.85 }}>
               <li>5 layers of petals (9+8+7+6+5) with gradients</li>
               <li>24 stamens with pollen particles</li>
               <li>Seed pod with 18 seeds in concentric rings</li>
@@ -3664,12 +3666,12 @@ export default function LotusFlower() {
               <li>Dew drops with rainbow caustics</li>
             </ul>
 
-            <h3 style={{ margin: "14px 0 6px", fontSize: 13, color: "#34d399", fontWeight: 600 }}>⚙️ Tech Stack</h3>
+            <h3 style={{ margin: "14px 0 6px", fontSize: "clamp(13px, 4vw, 15px)", color: "#34d399", fontWeight: 600 }}>⚙️ Tech Stack</h3>
             <p style={{ margin: 0, opacity: 0.85 }}>
               Next.js 16 · React 19 · TypeScript · HTML5 Canvas 2D · SVG · Tailwind CSS v4
             </p>
 
-            <p style={{ margin: "14px 0 0", fontSize: 11, opacity: 0.5, textAlign: "center" }}>
+            <p style={{ margin: "14px 0 0", fontSize: "clamp(11px, 3vw, 12px)", opacity: 0.5, textAlign: "center" }}>
               IEEE Vesak Verse 26 — Where Tradition Meets the Glow of Innovation
             </p>
           </div>
